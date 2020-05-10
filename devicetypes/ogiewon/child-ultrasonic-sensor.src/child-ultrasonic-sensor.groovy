@@ -39,9 +39,6 @@ metadata {
 							[value: 20, color: "#d04e00"]
 						])
 			}
-            //tileAttribute ("device.liters", key: "SECONDARY_CONTROL") {
-        	//	attributeState "power", label:'Tank capacity: ${currentValue} liters', icon: "http://cdn.device-icons.smartthings.com/Bath/bath6-icn@2x.png"
-            //}    
             tileAttribute ("device.gallons", key: "SECONDARY_CONTROL") {
                 attributeState "power", label:'Tank capacity: ${currentValue} gallons', icon: "http://cdn.device-icons.smartthings.com/Bath/bath6-icn@2x.png"
             }
