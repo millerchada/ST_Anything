@@ -17,7 +17,7 @@
  *    Date        Who            What
  *    ----        ---            ----
  *    2018-06-02  Dan Ogorchock  Revised/Simplified for Hubitat Composite Driver Model
- *   
+ *    2020-05-09  Chad Miller    Change units to Imperial, fixed calculation of Liters to correct forumula
  *
  * 
  */
@@ -40,8 +40,11 @@ metadata {
 						])
 			}
             tileAttribute ("device.liters", key: "SECONDARY_CONTROL") {
-        		attributeState "power", label:'Water capacity: ${currentValue} liters', icon: "http://cdn.device-icons.smartthings.com/Bath/bath6-icn@2x.png"
+        		attributeState "power", label:'Tank capacity: ${currentValue} liters', icon: "http://cdn.device-icons.smartthings.com/Bath/bath6-icn@2x.png"
             }    
+            tileAttribute ("device.gallons", key: "SECONDARY_CONTROL") {
+                attributeState "power", label:'Tank capacity: ${currentValue} gallons', icon: "http://cdn.device-icons.smartthings.com/Bath/bath6-icn@2x.png"
+            }
         }
  		valueTile("lastUpdated", "device.lastUpdated", inactiveLabel: false, decoration: "flat", width: 6, height: 2) {
     			state "default", label:'Last Updated ${currentValue}', backgroundColor:"#ffffff"
@@ -49,8 +52,9 @@ metadata {
     }
     
     preferences {
-        input name: "height", type: "number", title: "Height", description: "Enter height of tank in cm", required: true
+        input name: "height", type: "number", title: "Height", description: "Enter height of tank", required: true
         input name: "diameter", type: "number", title: "Diameter", description: "Enter diameter of tank", required: true
+        
     }
 }
 
@@ -62,8 +66,11 @@ def parse(String description) {
     if (name && value) {
         double sensorValue = value as float
         def volume = 3.14159 * (diameter/2) * (diameter/2) * height
-        double capacityLiters = volume / 1000 * 2
+        double capacityGallons = volume / 231
+        double capacityLiters = volume / 1000
+        capacityGallons = capacityGallons.round(2)
         capacityLiters = capacityLiters.round(2)
+        sendEvent(name: "gallons", value: capacityGallons)
         sendEvent(name: "liters", value: capacityLiters)
         double capacityValue = 100 - (sensorValue/height * 100 )
         if(capacityValue != 100)
